@@ -1,0 +1,18 @@
+#cloud-config
+package_upgrade: true
+write_files:
+  - path: /etc/systemd/system/docker.service.d/docker.conf
+    content: |
+      [Service]
+        ExecStart=
+        ExecStart=/usr/bin/dockerd
+  - path: /etc/docker/daemon.json
+    content: |
+      {
+        "hosts": ["fd://","tcp://0.0.0.0:2375"]
+      }
+runcmd:
+
+  - curl -sSL https://get.docker.com/ | sh
+  - usermod -aG docker chengzh
+  - docker run -d --name aria2-with-webui -p 6800:6800 -p 6880:80 -p 6888:8080 -v /DOWNLOAD_DIR:/data -v /CONFIG_DIR:/conf -e SECRET=12345678 xujinkai/aria2-with-webui
